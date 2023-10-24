@@ -1,0 +1,36 @@
+INT L
+INT I,J,FELD[10,6]
+REAL angulo, R
+POS P1; Coordenadas de una pose o localización
+DECL AXIS HOME
+DECL AXIS INICIAL
+;---------- Inicialización ---------
+BAS(#INITMOV,0)
+HOME={AXIS: A1 0,A2 -90,A3 90,A4 0,A5 0,A6 0}
+$TOOL=TOOL_DATA[1]
+$BASE =BASE_DATA[4]
+; Inicializa la base. Reemplazar por la base medida
+;Inicializa las velocidades y aceleraciones haciendo uso de una instrucción FOR BASE_DATA[4]
+;INICIAL = {AXIS: A1 4.11,A2 -84.30,A3 62.41,A4 0.64,A5 108.49,A6 -16.59}
+
+PTP HOME ; mueve el robot a HOME
+PTP {POS: X 0,Y 0,Z -30, A 180, B 0, C 180}
+
+;Traza con el TCP de la herramienta un polígono regular de L lados
+;PTP INICIAL
+
+R=-50
+
+L=4 ; inicializa el número de lados de un polígono regular
+FOR I=1 TO L+1
+ angulo=360/L*I
+ P1.X=0
+ P1.Y=R*SIN(angulo)
+ 
+ P1.Z=R*COS(angulo) ; reemplazar el valor necesario de z para dibujar sobre la hoja sujeta en la mesa de trabajo
+ P1.A=180
+ P1.B= 0
+ P1.C=-180
+LIN P1
+ENDFOR
+PTP HOME 

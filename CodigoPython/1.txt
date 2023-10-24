@@ -1,0 +1,79 @@
+INT I, l
+INT FELD[10,6]
+REAL angulo, R
+POS P300; Coordenadas de una pose o localización
+POS P301; Coordenadas de una pose o localización
+FOR I=1 TO 6
+   $VEL_AXIS[I] = 100 ;Todas las velocidades de ejes al 100%
+   $ACC_AXIS[I] = 100
+ENDFOR
+$TOOL=TOOL_DATA[1]
+$BASE=BASE_DATA[4]
+PTP {A1 0,A2 -90,A3 90,A4 0,A5 0,A6 0}
+
+WAIT FOR ( $IN[17] )
+PTP P1
+
+WHILE $IN[20] == TRUE
+;ESTRELLA----------------------------------------------------------------------------------------------------------
+IF $IN[21]== TRUE THEN
+   FOR I=1 TO 6
+   $VEL_AXIS[I] = 4 ;Todas las velocidades de ejes al 100%
+   $ACC_AXIS[I] = 100
+ENDFOR
+PTP P3 
+PTP P4 
+PTP P5 
+PTP P6
+PTP P7
+PTP P8
+PTP P9
+PTP P10
+PTP P11
+PTP P12
+PTP P13
+ENDIF
+
+WAIT FOR NOT ( $IN[18])
+IF $IN[22]== TRUE THEN
+;CIRCULO-------------------------------------------------------------------------------------------------------------
+PTP P14
+$VEL.CP=0.08
+$ACC.CP=1
+$VEL.ORI1=0.08
+$VEL.ORI2=0.08
+$ACC.ORI1=1
+$ACC.ORI2=1
+$APO.CVEL=1
+CIRC {X -1.77, Y 242.24, Z -35},{X -1.77,Y 217.24, Z -60, A 175.950,B 0.100000,C -174.580} C_VEL
+CIRC {X -1.77, Y 192.24, Z -35},{X -1.77,Y 217.24,Z -10,A 175.950,B 0.100000,C -174.580} C_VEL 
+ENDIF
+
+IF $IN[22]== TRUE THEN
+$TOOL=TOOL_DATA[1] ; Inicializa la herramienta. Reemplazar por la herramienta medida
+$BASE = $WORLD
+L=6 ; inicializa el número de lados de un polígono regular
+R=40;
+P301={POS: X 350,Y 0,Z 200,A 180,B 0,C -180}
+LIN P301
+FOR I=1 TO L+1
+  angulo=360/L*I
+  P300.Z=R*COS(angulo)+100
+  P300.Y=R*SIN(angulo)
+  P300.X=350 ; reemplazar el valor necesario de z para dibujar sobre la hoja sujeta en la mesa de trabajo 
+  P300.A=180
+  P300.B= 0
+  P300.C=-180
+LIN P300
+ENDFOR
+
+LIN P301
+ENDIF
+
+IF $IN[19]== TRUE THEN
+
+
+ENDIF
+ENDWHILE
+
+PTP {A1 30,A2 -90,A3 90,A4 0,A5 0,A6 0}
